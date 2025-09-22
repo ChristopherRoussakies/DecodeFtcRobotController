@@ -1,0 +1,45 @@
+package org.firstinspires.ftc.teamcode.subsystems;
+
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+
+public class Shooter {
+    private DcMotorEx shooter1;
+    private DcMotorEx shooter2;
+    private CRServo feedservo;
+
+
+    public void init(HardwareMap hwMap){
+        feedservo = hwMap.get(CRServo.class, "feedServo");
+        shooter1 = hwMap.get(DcMotorEx.class, "shooter1");
+        shooter2 = hwMap.get(DcMotorEx.class, "shooter2");
+
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    public void feedServoOn(){
+        feedservo.setPower(.75);
+    }
+
+    public void feedServoOff(){
+        feedservo.setPower(.5);
+    }
+
+
+    //Input TargetSpeed in RPM
+    public void setShooterSpeed(double targetspeed){
+        shooter1.setVelocity(targetspeed*28/60);
+        shooter2.setVelocity(targetspeed*28/60);
+    }
+
+    public double getShooterSpeed(){
+        return(shooter1.getVelocity()*28/60);
+    }
+}
