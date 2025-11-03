@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -7,11 +8,13 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class Indexer {
     private DcMotorEx Spinny;
     private Servo Flappy;
     private DigitalChannel Switchy;
-    private ColorSensor Lighty;
+    private RevColorSensorV3 Lighty;
 
     public void init(HardwareMap hwMap){
         Spinny = hwMap.get(DcMotorEx.class, "indexer");
@@ -19,7 +22,7 @@ public class Indexer {
         Flappy = hwMap.get(Servo.class, "indexerServo");
         Switchy = hwMap.get(DigitalChannel.class, "magneticLimitSwitch");
         Switchy.setMode(DigitalChannel.Mode.INPUT);
-        Lighty = hwMap.get(ColorSensor.class, "colorSensor");
+        Lighty = hwMap.get(RevColorSensorV3.class, "colorSensor");
     }
 
     public boolean getMagnetState(){
@@ -51,6 +54,22 @@ public class Indexer {
         return Lighty.blue();
     }
 
+    public void flapUp (){
+        Flappy.setPosition(.125);
+    }
+
+    public void flapDown(){
+        Flappy.setPosition(.25);
+    }
+    public boolean full(){
+        if ( Lighty.getDistance(DistanceUnit.CM)<5){
+           return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public int readColor(){
         if (Lighty.green()+Lighty.blue()>2000){
             if (Lighty.green()>Lighty.blue()){
@@ -64,6 +83,22 @@ public class Indexer {
         }
         else {
             return 0;
+            //empty
+        }
+    }
+    public int updateColor(int color){
+        if (Lighty.green()+Lighty.blue()>2000){
+            if (Lighty.green()>Lighty.blue()){
+                return 1;
+                //green
+            }
+            else{
+                return 2;
+                //purple
+            }
+        }
+        else {
+            return color;
             //empty
         }
     }
