@@ -50,7 +50,6 @@ public class Indexer {
     public int getBlue(){
         return Lighty.blue();
     }
-
     public int readColor(){
         if (Lighty.green()+Lighty.blue()>2000){
             if (Lighty.green()>Lighty.blue()){

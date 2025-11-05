@@ -25,6 +25,10 @@ public class Limelight extends OpMode {
         result = limelight.getLatestResult();
         telemetry.addData("Y",result.getTy());
         telemetry.addData("X",result.getTx());
+        List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+        for (LLResultTypes.FiducialResult fr : fiducialResults) {
+            telemetry.addData("Fiducial", "ID: %d,", fr.getFiducialId());
+        }
     }
     public void initLimelight(HardwareMap hwMap){
         limelight = hwMap.get(Limelight3A.class, "limelight");
