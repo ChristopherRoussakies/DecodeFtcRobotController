@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,11 +29,25 @@ public class Shooter {
     }
 
     public void feedServoOn(){
-        feedservo.setPower(.75);
+        feedservo.setPower(1);
+    }
+
+    public Action feedServoOnAuto(){
+        return telemetryPacket -> {
+            feedservo.setPower(1);
+            return true
+        };
     }
 
     public void feedServoOff(){
         feedservo.setPower(.5);
+    }
+
+    public Action feedServoOffAuto(){
+        return telemetryPacket -> {
+            feedservo.setPower(0);
+            return true;
+        };
     }
 
 
@@ -40,6 +55,14 @@ public class Shooter {
     public void setShooterSpeed(double targetspeed){
         shooter1.setVelocity(targetspeed*28/60);
         shooter2.setVelocity(targetspeed*28/60);
+    }
+
+    public Action setShooterSpeedAuto(double targetspeed){
+        return telemetryPacket -> {
+            shooter1.setVelocity(targetspeed*28/60);
+            shooter2.setVelocity(targetspeed*28/60);
+            return true
+        };
     }
 
     public double getShooterSpeed(){

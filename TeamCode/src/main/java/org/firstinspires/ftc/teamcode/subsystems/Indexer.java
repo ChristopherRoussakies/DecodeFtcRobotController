@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,7 +36,12 @@ public class Indexer {
         // 312 rpm motor 537.7 ticks per rotation
         // shooting 1/3 rotation per second or 179 ticks per second
     }
-
+    public Action runSpinnyAuto(double power){
+        return telemetryPacket -> {
+            Spinny.setPower(.1);
+            return true;
+        };
+    }
     public int getSpinnyPose(){
         return Spinny.getCurrentPosition();
     }
@@ -55,12 +61,27 @@ public class Indexer {
     }
 
     public void flapUp (){
-        Flappy.setPosition(.125);
+        Flappy.setPosition(.145);
+    }
+
+    public Action flapUpAuto() {
+        return telemetryPacket -> {
+            Flappy.setPosition(.145);
+            return true;
+        };
     }
 
     public void flapDown(){
         Flappy.setPosition(.25);
     }
+
+    public Action flapDownAuto() {
+        return telemetryPacket -> {
+            Flappy.setPosition(.25);
+            return true;
+        };
+    }
+
     public boolean full(){
         if ( Lighty.getDistance(DistanceUnit.CM)<5){
            return true;
