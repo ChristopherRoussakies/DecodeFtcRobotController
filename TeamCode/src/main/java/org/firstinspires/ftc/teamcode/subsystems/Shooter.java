@@ -18,10 +18,13 @@ public class Shooter {
         shooter1 = hwMap.get(DcMotorEx.class, "shooter1");
         shooter2 = hwMap.get(DcMotorEx.class, "shooter2");
 
+        feedservo.setDirection(CRServo.Direction.REVERSE);
+
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+        //shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void feedServoOn(){
@@ -40,6 +43,6 @@ public class Shooter {
     }
 
     public double getShooterSpeed(){
-        return(shooter1.getVelocity()*28/60);
+        return(shooter1.getVelocity()*60/28);
     }
 }

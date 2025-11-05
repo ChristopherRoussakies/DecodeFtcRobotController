@@ -23,9 +23,9 @@ public class RemoteControl extends OpMode {
 
     int indexerZero;
 
-    int color1;
-    int color2;
-    int color3;
+    int color1 = 0;
+    int color2 = 0;
+    int color3 = 0;
 
     double indexerPose;
     MecanumDrive drive;
@@ -46,12 +46,14 @@ public class RemoteControl extends OpMode {
     public void loop(){
         if (gamepad1.a){
             shoot.feedServoOn();
-            shoot.setShooterSpeed(3600);
+            shoot.setShooterSpeed(2300); //3600 for long, 2300 for short, 5000 for shooting point by goals
+            index.flapUp();
         }
 
         if (gamepad1.b){
             shoot.feedServoOff();
             shoot.setShooterSpeed(0);
+            index.flapDown();
         }
 
 
@@ -63,23 +65,46 @@ public class RemoteControl extends OpMode {
             index.runSpinny(0);
         }
 
-        if (index.getMagnetState()){
+        if (!index.getMagnetState()){
             indexerZero = index.getSpinnyPose();
         }
 
-        indexerPose = ((index.getSpinnyPose()-indexerZero)/537.7) % 1;
-        if(0<indexerPose && indexerPose<0.33){
-            color1 = index.readColor();
-        } else if (0.33<indexerPose && indexerPose<0.67) {
-            color2 = index.readColor();
-        } else if (0.67<indexerPose && indexerPose<1) {
-            color3 = index.readColor();
+        if (gamepad1.x){
+            color1 = 0;
+            color2 = 0;
+            color3 = 0;
+        }
+
+
+        indexerPose = (((index.getSpinnyPose()-indexerZero)/537.7) % 1);
+        if(0.167<indexerPose && indexerPose<0.5){
+            if (color1 == 0){
+               color1 = index.readColor();
+            }
+            else {
+                color1 = index.updateColor(color1);
+            }
+        } else if (0.5<indexerPose && indexerPose<0.833) {
+            if (color2 == 0){
+                color2 = index.readColor();
+            }
+            else {
+                color2 = index.updateColor(color2);
+            };
+        } else if (0.833<indexerPose && indexerPose<1 ||0<indexerPose && indexerPose<0.167 ) {
+            if (color3 == 0){
+                color3 = index.readColor();
+            }
+            else {
+                color3 = index.updateColor(color3);
+            }
         }
 
         telemetry.addData("color1",color1);
         telemetry.addData("color2",color2);
         telemetry.addData("color3",color3);
-
+        telemetry.addData("full", (index.full()));
+        telemetry.addData("IndexPosition", indexerPose);
 
         drive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
