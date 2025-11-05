@@ -48,6 +48,15 @@ public class RemoteControl extends OpMode {
             shoot.feedServoOn();
             shoot.setShooterSpeed(2300); //3600 for long, 2300 for short, 5000 for shooting point by goals
             index.flapUp();
+
+            // This updates the slot to empty when a slot is fired.
+            if(0.167<indexerPose && indexerPose<0.5) {
+                color1 = 0;
+            } else if (0.5<indexerPose && indexerPose<0.833) {
+                color2 = 0;
+            } else if (0.833<indexerPose && indexerPose<1 ||0<indexerPose && indexerPose<0.167 ) {
+                color3 = 0;
+            }
         }
 
         if (gamepad1.b){
@@ -75,7 +84,18 @@ public class RemoteControl extends OpMode {
             color3 = 0;
         }
 
+        //indexerPose is where the magnet is relative to the magnet sensor in revolutions.
+        // Slot one 1st after magnet
+        // At color sensor: indexerPose = 0.333
+        // At shooter: indexerPose = 0.5
 
+        // Slot two 2st after magnet
+        // At color sensor: indexerPose = 0.667
+        // At shooter: indexerPose = 0.833
+
+        // Slot three 3st after magnet
+        // At color sensor: indexerPose = 0 or 1
+        // At shooter: indexerPose = 0.167
         indexerPose = (((index.getSpinnyPose()-indexerZero)/537.7) % 1);
         if(0.167<indexerPose && indexerPose<0.5){
             if (color1 == 0){
@@ -97,6 +117,81 @@ public class RemoteControl extends OpMode {
             }
             else {
                 color3 = index.updateColor(color3);
+            }
+        }
+        // Load Green
+        // Checks each slot for a green
+        // Rotates to that slot then vibrates controller
+        if (gamepad1.dpad_left){
+            if (color1==1){
+                if(0.4<indexerPose && indexerPose<0.6) {
+                    index.runSpinny(50);
+                    telemetry.addData("Shot Status","LOADING GREEN");
+                }
+                else{
+                    telemetry.addData("Shot Status","GREEN READY");
+                    gamepad1.rumble(500);
+                }
+            }
+            else if (color2==1){
+                if(0.733<indexerPose && indexerPose<0.933) {
+                    index.runSpinny(50);
+                    telemetry.addData("Shot Status","LOADING GREEN");
+                }
+                else{
+                    telemetry.addData("Shot Status","GREEN READY");
+                    gamepad1.rumble(500);
+                }
+            }
+            else if (color3==1){
+                if(0.067<indexerPose && indexerPose<0.267) {
+                    index.runSpinny(50);
+                    telemetry.addData("Shot Status","LOADING GREEN");
+                }
+                else{
+                    telemetry.addData("Shot Status","GREEN READY");
+                    gamepad1.rumble(500);
+                }
+            }
+            else{
+                    telemetry.addData("ERROR","NO GREEN");
+                }
+        }
+
+        // Load Purple
+        if (gamepad1.dpad_right){
+            if (color1==2){
+                if(0.4<indexerPose && indexerPose<0.6) {
+                    index.runSpinny(50);
+                    telemetry.addData("Shot Status","LOADING PURPLE");
+                }
+                else{
+                    telemetry.addData("Shot Status","PURPLE READY");
+                    gamepad1.rumble(500);
+                }
+            }
+            else if (color2==2){
+                if(0.733<indexerPose && indexerPose<0.933) {
+                    index.runSpinny(50);
+                    telemetry.addData("Shot Status","LOADING PURPLE");
+                }
+                else{
+                    telemetry.addData("Shot Status","PURPLE READY");
+                    gamepad1.rumble(500);
+                }
+            }
+            else if (color3==2){
+                if(0.067<indexerPose && indexerPose<0.267) {
+                    index.runSpinny(50);
+                    telemetry.addData("Shot Status","LOADING PURPLE");
+                }
+                else{
+                    telemetry.addData("Shot Status","PURPLE READY");
+                    gamepad1.rumble(500);
+                }
+            }
+            else{
+                telemetry.addData("ERROR","NO PURPLE");
             }
         }
 

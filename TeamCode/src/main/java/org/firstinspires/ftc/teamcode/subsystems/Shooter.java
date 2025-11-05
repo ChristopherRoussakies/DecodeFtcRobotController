@@ -35,7 +35,7 @@ public class Shooter {
     public Action feedServoOnAuto(){
         return telemetryPacket -> {
             feedservo.setPower(1);
-            return true
+            return true;
         };
     }
 
@@ -61,7 +61,7 @@ public class Shooter {
         return telemetryPacket -> {
             shooter1.setVelocity(targetspeed*28/60);
             shooter2.setVelocity(targetspeed*28/60);
-            return true
+            return true;
         };
     }
 
