@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PoseStorage;
 
-@Autonomous
+//@Autonomous
 public final class PracticeAuto3 extends LinearOpMode {
     enum State {
         TRAJECTORY_1,

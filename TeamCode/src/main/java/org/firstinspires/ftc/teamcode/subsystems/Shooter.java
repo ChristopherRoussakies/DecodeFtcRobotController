@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import java.util.Objects;
+
 
 public class Shooter {
     private DcMotorEx shooter1;
@@ -33,10 +35,8 @@ public class Shooter {
     }
 
     public Action feedServoOnAuto(){
-        return telemetryPacket -> {
             feedservo.setPower(1);
-            return true;
-        };
+            return Objects::nonNull;
     }
 
     public void feedServoOff(){
@@ -44,10 +44,8 @@ public class Shooter {
     }
 
     public Action feedServoOffAuto(){
-        return telemetryPacket -> {
             feedservo.setPower(0);
-            return true;
-        };
+            return Objects::nonNull;
     }
 
 
@@ -57,12 +55,16 @@ public class Shooter {
         shooter2.setVelocity(targetspeed*28/60);
     }
 
-    public Action setShooterSpeedAuto(double targetspeed){
-        return telemetryPacket -> {
-            shooter1.setVelocity(targetspeed*28/60);
-            shooter2.setVelocity(targetspeed*28/60);
-            return true;
-        };
+    public Action shootCloseAuto(){
+            shooter1.setVelocity(1073.33);
+            shooter2.setVelocity(1073.33);
+            return Objects::nonNull;
+    }
+
+    public Action noShootAuto(){
+        shooter1.setVelocity(0);
+        shooter2.setVelocity(0);
+        return Objects::nonNull;
     }
 
     public double getShooterSpeed(){

@@ -32,7 +32,7 @@ import java.util.List;
 @Config
 @Autonomous
 
-public final class BlueClose extends LinearOpMode {
+public final class BlueFar extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0, 0, 0);
@@ -49,15 +49,15 @@ public final class BlueClose extends LinearOpMode {
 
 
         TrajectoryActionBuilder traj1 = drive.actionBuilder(beginPose)
-                .lineToXConstantHeading(-19); //-x=backwards
-                //.stopAndAdd(shoot.setShooterSpeed(2300));
-                        //.stopAndAdd(index.)
-                //.splineTo(new Vector2d(0, 24), Math.PI);
+                .splineTo(new Vector2d(96, 21), Math.PI/4); //-x=backwards
+        //.stopAndAdd(shoot.setShooterSpeed(2300));
+        //.stopAndAdd(index.)
+        //.splineTo(new Vector2d(0, 24), Math.PI);
 
         TrajectoryActionBuilder traj2 = traj1.endTrajectory().fresh()
-                .strafeTo(new Vector2d(-19, 23)); //-y=right
-               // .stopAndAdd(shoot.setShooterSpeed(0));
-               // .strafeTo(new Vector2d(0, 0));
+                .strafeTo(new Vector2d(96, 45)); //-y=right
+        // .stopAndAdd(shoot.setShooterSpeed(0));
+        // .strafeTo(new Vector2d(0, 0));
 
         Action act1=traj1.build();
         Action act2=traj2.build();
@@ -79,7 +79,7 @@ public final class BlueClose extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        new SleepAction(12),
+                        new SleepAction(13),
                         act2
 
                 )

@@ -89,11 +89,11 @@ public class RemoteControl extends OpMode {
         // At color sensor: indexerPose = 0.333
         // At shooter: indexerPose = 0.5
 
-        // Slot two 2st after magnet
+        // Slot two 2nd after magnet
         // At color sensor: indexerPose = 0.667
         // At shooter: indexerPose = 0.833
 
-        // Slot three 3st after magnet
+        // Slot three 3rd after magnet
         // At color sensor: indexerPose = 0 or 1
         // At shooter: indexerPose = 0.167
         indexerPose = (((index.getSpinnyPose()-indexerZero)/537.7) % 1);
@@ -124,8 +124,8 @@ public class RemoteControl extends OpMode {
         // Rotates to that slot then vibrates controller
         if (gamepad1.dpad_left){
             if (color1==1){
-                if(0.4<indexerPose && indexerPose<0.6) {
-                    index.runSpinny(50);
+                if(!(0.4<indexerPose && indexerPose<0.6)) {
+                    index.runSpinny(400);
                     telemetry.addData("Shot Status","LOADING GREEN");
                 }
                 else{
@@ -134,8 +134,8 @@ public class RemoteControl extends OpMode {
                 }
             }
             else if (color2==1){
-                if(0.733<indexerPose && indexerPose<0.933) {
-                    index.runSpinny(50);
+                if(!(0.733<indexerPose && indexerPose<0.933)) {
+                    index.runSpinny(400);
                     telemetry.addData("Shot Status","LOADING GREEN");
                 }
                 else{
@@ -144,8 +144,8 @@ public class RemoteControl extends OpMode {
                 }
             }
             else if (color3==1){
-                if(0.067<indexerPose && indexerPose<0.267) {
-                    index.runSpinny(50);
+                if(!(0.067<indexerPose && indexerPose<0.267)) {
+                    index.runSpinny(400);
                     telemetry.addData("Shot Status","LOADING GREEN");
                 }
                 else{
@@ -161,8 +161,8 @@ public class RemoteControl extends OpMode {
         // Load Purple
         if (gamepad1.dpad_right){
             if (color1==2){
-                if(0.4<indexerPose && indexerPose<0.6) {
-                    index.runSpinny(50);
+                if(!(0.4<indexerPose && indexerPose<0.6)) {
+                    index.runSpinny(400);
                     telemetry.addData("Shot Status","LOADING PURPLE");
                 }
                 else{
@@ -171,8 +171,8 @@ public class RemoteControl extends OpMode {
                 }
             }
             else if (color2==2){
-                if(0.733<indexerPose && indexerPose<0.933) {
-                    index.runSpinny(50);
+                if(!(0.733<indexerPose && indexerPose<0.933)) {
+                    index.runSpinny(400);
                     telemetry.addData("Shot Status","LOADING PURPLE");
                 }
                 else{
@@ -181,8 +181,8 @@ public class RemoteControl extends OpMode {
                 }
             }
             else if (color3==2){
-                if(0.067<indexerPose && indexerPose<0.267) {
-                    index.runSpinny(50);
+                if(!(0.067<indexerPose && indexerPose<0.267)) {
+                    index.runSpinny(400);
                     telemetry.addData("Shot Status","LOADING PURPLE");
                 }
                 else{
@@ -203,10 +203,10 @@ public class RemoteControl extends OpMode {
 
         drive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x
+                        -gamepad1.right_stick_y, //switch left and right to switch joystick directions
+                        -gamepad1.right_stick_x //right for fifi, left for charlie
                 ),
-                -gamepad1.right_stick_x
+                -gamepad1.left_stick_x  
         ));
 
         drive.updatePoseEstimate();

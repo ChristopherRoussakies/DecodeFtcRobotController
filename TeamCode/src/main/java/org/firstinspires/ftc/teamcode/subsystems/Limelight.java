@@ -16,37 +16,41 @@ public class Limelight extends OpMode {
     LLResult result;
 
     @Override
-    public void init(){
+    public void init() {
         initLimelight(hardwareMap);
     }
 
     @Override
-    public void loop(){
+    public void loop() {
         result = limelight.getLatestResult();
-        telemetry.addData("Y",result.getTy());
-        telemetry.addData("X",result.getTx());
+        telemetry.addData("Y", result.getTy());
+        telemetry.addData("X", result.getTx());
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
         for (LLResultTypes.FiducialResult fr : fiducialResults) {
             telemetry.addData("Fiducial", "ID: %d,", fr.getFiducialId());
         }
     }
-    public void initLimelight(HardwareMap hwMap){
+
+    public void initLimelight(HardwareMap hwMap) {
         limelight = hwMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limelight.start();
+    }
+}
 
-
-        /*public void loop(){
+ /*       public int limelightId(){
     result = limelight.getLatestResult();
+    int atNumber
     telemetry.addData("Y",result.getTy());
     telemetry.addData("X",result.getTx());
     List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
     for (LLResultTypes.FiducialResult fr : fiducialResults) {
-        telemetry.addData("Fiducial", "ID: %d,", fr.getFiducialId());
-    }
-}*/
-
-
+        //telemetry.addData("Fiducial", "ID: %d,", fr.getFiducialId());
+        atNumber = fr.getFiducialId();
     }
 }
+
+
+    }
+}*/

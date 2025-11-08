@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.Objects;
+
 public class Indexer {
     private DcMotorEx Spinny;
     private Servo Flappy;
@@ -36,11 +38,9 @@ public class Indexer {
         // 312 rpm motor 537.7 ticks per rotation
         // shooting 1/3 rotation per second or 179 ticks per second
     }
-    public Action runSpinnyAuto(double power){
-        return telemetryPacket -> {
-            Spinny.setPower(.1);
-            return true;
-        };
+    public Action runSpinnyAuto(){
+            Spinny.setPower(.3);
+            return Objects::nonNull;
     }
     public int getSpinnyPose(){
         return Spinny.getCurrentPosition();
@@ -65,10 +65,8 @@ public class Indexer {
     }
 
     public Action flapUpAuto() {
-        return telemetryPacket -> {
             Flappy.setPosition(.145);
-            return true;
-        };
+            return Objects::nonNull;
     }
 
     public void flapDown(){
@@ -76,10 +74,8 @@ public class Indexer {
     }
 
     public Action flapDownAuto() {
-        return telemetryPacket -> {
             Flappy.setPosition(.25);
-            return true;
-        };
+            return Objects::nonNull;
     }
 
     public boolean full(){
