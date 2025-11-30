@@ -45,7 +45,6 @@ public class RemoteControl extends OpMode {
     @Override
     public void loop(){
         if (gamepad1.a){
-            shoot.feedServoOn();
             shoot.setShooterSpeed(2300); //3600 for long, 2300 for short, 5000 for shooting point by goals
             index.flapUp();
 
@@ -58,9 +57,11 @@ public class RemoteControl extends OpMode {
                 color3 = 0;
             }
         }
+        else{
+            index.flapDown();
+        }
 
         if (gamepad1.b){
-            shoot.feedServoOff();
             shoot.setShooterSpeed(0);
             index.flapDown();
         }
@@ -72,6 +73,14 @@ public class RemoteControl extends OpMode {
         }
         else {
             index.runSpinny(0);
+        }
+
+        if (gamepad1.left_bumper){
+            index.intakeOn();
+            //ticks per second
+        }
+        else {
+            index.intakeOff();
         }
 
         if (!index.getMagnetState()){

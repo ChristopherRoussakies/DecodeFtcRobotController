@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,19 +16,32 @@ import java.util.Objects;
 
 public class Indexer {
     private DcMotorEx Spinny;
+    private DcMotorEx Intake;
     private Servo Flappy;
+    private CRServo Intake2;
     private DigitalChannel Switchy;
     private RevColorSensorV3 Lighty;
 
     public void init(HardwareMap hwMap){
         Spinny = hwMap.get(DcMotorEx.class, "indexer");
         Spinny.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Intake = hwMap.get(DcMotorEx.class, "intake");
+        Intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Flappy = hwMap.get(Servo.class, "indexerServo");
+        Intake2 = hwMap.get(CRServo.class, "intakeServo");
         Switchy = hwMap.get(DigitalChannel.class, "magneticLimitSwitch");
         Switchy.setMode(DigitalChannel.Mode.INPUT);
         Lighty = hwMap.get(RevColorSensorV3.class, "colorSensor");
     }
 
+    public void intakeOn(){
+        Intake.setVelocity(1000);
+        Intake2.setPower(-1);
+    }
+    public void intakeOff(){
+        Intake.setVelocity(0);
+        Intake2.setPower(0);
+    }
     public boolean getMagnetState(){
         return Switchy.getState();
     }
@@ -63,15 +77,15 @@ public class Indexer {
     public void flapUp (){
         Flappy.setPosition(.145);
     }
-
+    public void flapDown(){
+        Flappy.setPosition(.25);
+    }
     public Action flapUpAuto() {
             Flappy.setPosition(.145);
             return Objects::nonNull;
     }
 
-    public void flapDown(){
-        Flappy.setPosition(.25);
-    }
+
 
     public Action flapDownAuto() {
             Flappy.setPosition(.25);
