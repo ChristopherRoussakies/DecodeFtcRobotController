@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import com.acmerobotics.dashboard.FtcDashboard;
 
 @TeleOp
-public class RemoteControl extends OpMode {
+public class RemoteControlCharlie extends OpMode {
 
     boolean intakeOn = false;
     boolean shooterOn = false;
@@ -153,7 +153,7 @@ public class RemoteControl extends OpMode {
                 index.runSpinnyToPose(3, indexerZero);
             }
             else{
-                    telemetry.addData("ERROR","NO GREEN");
+                telemetry.addData("ERROR","NO GREEN");
             }
         }
 

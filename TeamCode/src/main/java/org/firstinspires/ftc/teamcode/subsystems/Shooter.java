@@ -21,7 +21,7 @@ public class Shooter {
         shooter1 = hwMap.get(DcMotorEx.class, "shooter1");
         shooter2 = hwMap.get(DcMotorEx.class, "shooter2");
 
-        feedservo.setDirection(CRServo.Direction.REVERSE);
+        //feedservo.setDirection(CRServo.Direction.REVERSE);
 
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
