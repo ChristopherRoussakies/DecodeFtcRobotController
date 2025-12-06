@@ -85,6 +85,19 @@ public class Indexer {
         Spinny.setPower(.05);
     }
 
+    public int getSpinnyTargetPose(int targetSlot, int zeroPose){
+        indexerPose = (((getSpinnyPose() - zeroPose) / 537.7) % 1);
+        if (targetSlot==1){
+            targetIndexPose = getSpinnyPose() + (int) Math.round((0.5 - indexerPose)*537.7);
+        } else if (targetSlot==2) {
+            targetIndexPose = getSpinnyPose() + (int) Math.round((0.833 - indexerPose)*537.7);
+        }
+        else {
+            targetIndexPose = getSpinnyPose() + (int) Math.round((0.167 - indexerPose)*537.7);
+        }
+        return targetIndexPose;
+    }
+
     public Action runSpinnyAuto(){
             Spinny.setPower(.3);
             return Objects::nonNull;

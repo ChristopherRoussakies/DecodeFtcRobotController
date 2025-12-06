@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -49,10 +50,12 @@ public final class Blue9Artifact extends LinearOpMode {
     int pattern = 1;
 
     int indexerZero = 0;
+
+    int spinnyTarget;
     double indexerPose;
-    int color1 = 0;
-    int color2 = 0;
-    int color3 = 0;
+    int[] colors = {0, 0, 0};
+
+    boolean limelightStarted = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -106,49 +109,217 @@ public final class Blue9Artifact extends LinearOpMode {
         Action Shoot3 = shoot3.build();
         Action Park = park.build();
 
-        waitForStart();
+        Action spinShooterUp = packet -> {
+            shooter.setShooterSpeed(2300);
+            return false;
+        };
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        // Add initial wait here
-                        new SleepAction(0),//_____ Adjust Delay
-                        //Drives the robot off the goal and faces the obelisk
-                        Scan
-                )
-        );
+        Action stopShooter = packet -> {
+            shooter.setShooterSpeed(2300);
+            return false;
+        };
 
-        //Runs Limelight for 2 seconds
-        /*double time = getRuntime();
+        Action shooterFlapUp = packet -> {
+            indexer.flapUp();
+            if (0.333 < indexerPose && indexerPose < 0.667) {
+                colors[0] = 0;
+            } else if (0.667 < indexerPose && indexerPose < 1) {
+                colors[1] = 0;
+            } else {
+                colors[2] = 0;
+            }
+            return false;
+        };
 
-        //                        |
-        //Adjust Limelight Delay \|/
-        while(getRuntime()-time < 2){
+        Action shooterFlapDown = packet -> {
+            indexer.flapDown();
+            return false;
+        };
 
+        Action sortIndexer = packet -> {
+            indexer.runSpinny(179);
+            if (!indexer.getMagnetState()){
+                indexerZero = indexer.getSpinnyPose();
+            }
+            colors = indexer.readIndexer(indexerZero, colors);
+            packet.put("Colors", colors);
+            return (colors[0]==0 || colors[1]==0 || colors[2]==0);
+        };
+
+        Action stopIndexer = packet -> {
+            indexer.runSpinny(0);
+            return false;
+        };
+
+        Action limelightStuff = packet -> {
+            if (!limelightStarted){
+                double time = getRuntime();
+                limelightStarted=true;
+            }
             result = limelight.getLatestResult();
             //This is a list that stores data of type LLResultTypes.FiducialResult
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
 
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
 
-                telemetry.addData("April Tag ID:", fr.getFiducialId());
+                packet.put("April Tag ID:", fr.getFiducialId());
 
-                if (fr.getFiducialId() == 21){
-                    pattern =1;
+                if (fr.getFiducialId() == 21) {
+                    pattern = 1;
+                    break;
+                } else if (fr.getFiducialId() == 22) {
+                    pattern = 2;
+                    break;
+                } else if (fr.getFiducialId() == 23) {
+                    pattern = 3;
                     break;
                 }
-
-                else if (fr.getFiducialId() == 22){
-                    pattern =2;
-                    break;
-                }
-
-                else if (fr.getFiducialId() == 23){
-                    pattern =3;
-                    break;
-                }
-
             }
+            return (getRuntime()-time < 2);
+        };
+
+        Action loadGreen = packet -> {
+            if (colors[0]==1){
+                indexer.runSpinnyToPose(1, indexerZero);
+                spinnyTarget=indexer.getSpinnyTargetPose(1, indexerZero);
+                packet.put("LOADING GREEN", "SLOT 1");
+            }
+            else if (colors[1]==1){
+                indexer.runSpinnyToPose(2, indexerZero);
+                spinnyTarget=indexer.getSpinnyTargetPose(2, indexerZero);
+                packet.put("LOADING GREEN", "SLOT 2");
+            }
+            else if (colors[2]==1){
+                indexer.runSpinnyToPose(3, indexerZero);
+                spinnyTarget=indexer.getSpinnyTargetPose(3, indexerZero);
+                packet.put("LOADING GREEN", "SLOT 3");
+            }
+            else{
+                packet.put("ERROR","NO GREEN");
+            }
+            return Math.abs(spinnyTarget-indexer.getSpinnyPose())<15;
+        };
+
+        Action loadPurple = packet -> {
+            if (colors[0]==2){
+                indexer.runSpinnyToPose(1, indexerZero);
+                spinnyTarget=indexer.getSpinnyTargetPose(1, indexerZero);
+                packet.put("LOADING PURPLE", "SLOT 1");
+            }
+            else if (colors[1]==2){
+                indexer.runSpinnyToPose(2, indexerZero);
+                spinnyTarget=indexer.getSpinnyTargetPose(2, indexerZero);
+                packet.put("LOADING PURPLE", "SLOT 2");
+            }
+            else if (colors[2]==2){
+                indexer.runSpinnyToPose(3, indexerZero);
+                spinnyTarget=indexer.getSpinnyTargetPose(3, indexerZero);
+                packet.put("LOADING PURPLE", "SLOT 3");
+            }
+            else{
+                packet.put("ERROR","NO PURPLE");
+            }
+            return Math.abs(spinnyTarget-indexer.getSpinnyPose())<15;
+        };
+
+
+        waitForStart();
+
+        Actions.runBlocking(
+                new ParallelAction(
+                        new SequentialAction(
+                                // Add initial wait here
+                                new SleepAction(0),//_____ Adjust Delay
+                                //Drives the robot off the goal and faces the obelisk
+                                Scan,
+                                limelightStuff
+                        )
+                        ,
+                        new SequentialAction(
+                                spinShooterUp,
+                                sortIndexer,
+                                stopIndexer
+                        )
+                )
+        );
+
+        if (pattern==1){
+            Actions.runBlocking(
+                    new SequentialAction(
+                            new ParallelAction(
+                                Shoot1
+                                ,
+                                loadGreen
+                            ),
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25)
+                    )
+
+            );
+        } else if (pattern==2){
+            Actions.runBlocking(
+                    new SequentialAction(
+                            new ParallelAction(
+                                    Shoot1
+                                    ,
+                                    loadPurple
+                            ),
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25),
+                            loadGreen,
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25)
+                    )
+
+            );
+        } else {
+            Actions.runBlocking(
+                    new SequentialAction(
+                            new ParallelAction(
+                                    Shoot1
+                                    ,
+                                    loadPurple
+                            ),
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25),
+                            loadGreen,
+                            shooterFlapUp,
+                            new SleepAction(0.25),
+                            shooterFlapDown,
+                            new SleepAction(0.25)
+                    )
+
+            );
         }
+        /*
 
         //Turn back to goal
         Actions.runBlocking(
@@ -280,7 +451,7 @@ public final class Blue9Artifact extends LinearOpMode {
         shooter.feedServoOn();
         indexer.runSpinny(50);
 
-         */
+
         Actions.runBlocking(
                 new SequentialAction(
                         //add wait time for shooter
@@ -289,7 +460,7 @@ public final class Blue9Artifact extends LinearOpMode {
 
                 )
         );
-
+ */
         indexer.runSpinny(179);
         indexer.intakeOn();
         indexer.secondStageOn();
@@ -350,7 +521,7 @@ public final class Blue9Artifact extends LinearOpMode {
                 )
         );
 
-    }
+    };
 
 
 
