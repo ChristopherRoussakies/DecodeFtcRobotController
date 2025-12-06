@@ -21,12 +21,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 public class RemoteControl extends OpMode {
 
     boolean intakeOn = false;
+    boolean intakeBack = false;
     boolean shooterOn = false;
     boolean indexerOn = false;
     boolean indexerAuto = false;
     boolean lastXState;
     boolean lastAState;
     boolean lastYState;
+    boolean lastDownState;
     int indexerZero;
 
     int color1 = 0;
@@ -57,6 +59,13 @@ public class RemoteControl extends OpMode {
 
         if (gamepad1.dpad_up){
             index.flapUp();
+            if (0.333 < indexerPose && indexerPose < 0.667) {
+               colors[0] = 0;
+            } else if (0.667 < indexerPose && indexerPose < 1) {
+                colors[1] = 0;
+            } else {
+             colors[2] = 0;
+            }
         }
         else {
             index.flapDown();
@@ -99,6 +108,18 @@ public class RemoteControl extends OpMode {
         }
         lastYState = gamepad1.y;
 
+        if (gamepad1.dpad_down && !lastDownState){
+            if (intakeBack){
+                index.intakeReverse();
+                intakeBack = false;
+            }
+            else {
+                index.intakeReverse();
+                intakeBack = true;
+            }
+        }
+        lastDownState = gamepad1.dpad_down;
+
 
         if (!index.getMagnetState()){
             indexerZero = index.getSpinnyPose();
@@ -128,16 +149,18 @@ public class RemoteControl extends OpMode {
             if (indexerOn){
                 index.runSpinny(0);
                 indexerOn = false;
+                indexerAuto = false;
             }
             else {
                 index.runSpinny(179);
                 indexerOn = true;
+                indexerAuto = true;
             }
         }
         lastXState = gamepad1.x;
 
         indexerPose = (((index.getSpinnyPose()-indexerZero)/537.7) % 1);
-        index.readIndexer(0, colors);
+        index.readIndexer(indexerZero, colors);
         // Load Green
         // Checks each slot for a green
         // Rotates to that slot then vibrates controller
@@ -145,12 +168,15 @@ public class RemoteControl extends OpMode {
             indexerAuto = true;
             if (colors[0]==1){
                 index.runSpinnyToPose(1, indexerZero);
+                telemetry.addData("LOADING GREEN", "SLOT 1");
             }
             else if (colors[1]==1){
                 index.runSpinnyToPose(2, indexerZero);
+                telemetry.addData("LOADING GREEN", "SLOT 2");
             }
             else if (colors[2]==1){
                 index.runSpinnyToPose(3, indexerZero);
+                telemetry.addData("LOADING GREEN", "SLOT 3");
             }
             else{
                     telemetry.addData("ERROR","NO GREEN");
@@ -162,12 +188,15 @@ public class RemoteControl extends OpMode {
             indexerAuto = true;
             if (colors[0]==2){
                 index.runSpinnyToPose(1, indexerZero);
+                telemetry.addData("LOADING PUPRLE", "SLOT 1");
             }
             else if (colors[1]==2){
                 index.runSpinnyToPose(2, indexerZero);
+                telemetry.addData("LOADING PUPRLE", "SLOT 2");
             }
             else if (colors[2]==2){
                 index.runSpinnyToPose(3, indexerZero);
+                telemetry.addData("LOADING PUPRLE", "SLOT 3");
             }
             else{
                 telemetry.addData("ERROR","NO PURPLE");
@@ -179,13 +208,14 @@ public class RemoteControl extends OpMode {
         telemetry.addData("color3",colors[2]);
         telemetry.addData("full", (index.full()));
         telemetry.addData("IndexPosition", indexerPose);
+        telemetry.addData("Spinny Pose", index.getSpinnyPose());
 
         drive.setDrivePowers(new PoseVelocity2d(
                 new Vector2d(
-                        -gamepad1.left_stick_y, //switch left and right to switch joystick directions
-                        -gamepad1.left_stick_x //right for fifi, left for charlie
+                        -gamepad1.right_stick_y -gamepad1.left_trigger +gamepad1.right_trigger, //switch left and right to switch joystick directions
+                        -gamepad1.right_stick_x //right for fifi, left for charlie
                 ),
-                -gamepad1.right_stick_x
+                -gamepad1.left_stick_x
         ));
 
         drive.updatePoseEstimate();
