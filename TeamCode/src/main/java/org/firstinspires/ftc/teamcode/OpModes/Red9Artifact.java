@@ -42,7 +42,7 @@ LINE 256 Adjust Final Shot Delay
  */
 @Autonomous
 
-public final class Blue9Artifact extends LinearOpMode {
+public final class Red9Artifact extends LinearOpMode {
     private Limelight3A limelight;
 
     LLResult result;
@@ -73,32 +73,32 @@ public final class Blue9Artifact extends LinearOpMode {
 
 
         TrajectoryActionBuilder scan = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(-25, 0), -Math.PI / 3);//-x=backwards was -19
+                .strafeToLinearHeading(new Vector2d(-19, 0), Math.PI / 2);//-x=backwards
 
         TrajectoryActionBuilder shoot1 = scan.endTrajectory().fresh()
-                .turnTo(Math.toRadians(10));
+                .turnTo(0);
 
         TrajectoryActionBuilder preEat1 = shoot1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-45, 25), Math.PI / 4); //(-39, 27)
+                .strafeToLinearHeading(new Vector2d(-39, -28), -Math.PI / 4); //(-39, 27)
 
         TrajectoryActionBuilder eat1 = preEat1.endTrajectory().fresh()
-                .strafeToConstantHeading(new Vector2d(-23, 37));
-                new TranslationalVelConstraint(15);
+                .strafeToConstantHeading(new Vector2d(-26, -37));
+        new TranslationalVelConstraint(20);
 
         TrajectoryActionBuilder shoot2 = eat1.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-19, 0), 0);
 
         TrajectoryActionBuilder preEat2 = shoot2.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-53, 43), Math.PI / 4);
+                .strafeToLinearHeading(new Vector2d(-53, -43), -Math.PI / 4);
 
         TrajectoryActionBuilder eat2 = preEat2.endTrajectory().fresh()
-                .strafeToConstantHeading(new Vector2d(-41, 54));
+                .strafeToConstantHeading(new Vector2d(-41, -54));
 
         TrajectoryActionBuilder shoot3 = eat2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-19, 0), 0);
 
         TrajectoryActionBuilder park = shoot3.endTrajectory().fresh()
-                .strafeTo(new Vector2d(-19, 25)); //-y=right
+                .strafeTo(new Vector2d(-19, -20)); //-y=right
 
         Action Scan = scan.build();
         Action Shoot1 = shoot1.build();
@@ -231,14 +231,14 @@ public final class Blue9Artifact extends LinearOpMode {
         waitForStart();
 
         indexer.secondStageOn();
-            indexer.flapUp();
-            indexer.flapDown();
+
         Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(
                                 spinShooterUp,
                                 sortIndexer,
                                 stopIndexer
+
                         )
                         ,
                         new SequentialAction(
@@ -257,9 +257,9 @@ public final class Blue9Artifact extends LinearOpMode {
             Actions.runBlocking(
                     new SequentialAction(
                             new ParallelAction(
-                                Shoot1
-                                ,
-                                loadGreen
+                                    Shoot1
+                                    ,
+                                    loadGreen
                             ),
                             shooterFlapUp,
                             new SleepAction(0.5),
@@ -471,7 +471,7 @@ public final class Blue9Artifact extends LinearOpMode {
                 )
         );
  */
-        indexer.runSpinny(179);
+        //indexer.runSpinny(179);
         indexer.intakeOn();
         indexer.secondStageOn();
 

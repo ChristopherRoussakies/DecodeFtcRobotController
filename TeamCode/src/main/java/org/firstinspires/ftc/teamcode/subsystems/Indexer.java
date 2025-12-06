@@ -84,7 +84,20 @@ public class Indexer {
         Spinny.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Spinny.setPower(.05);
     }
-
+    public void runSpinnyToPoseAuto(int targetSlot, int zeroPose){
+        indexerPose = (((getSpinnyPose() - zeroPose) / 537.7) % 1);
+        if (targetSlot==1){
+            targetIndexPose = getSpinnyPose() + (int) Math.round((0.5 - indexerPose)*537.7);
+        } else if (targetSlot==2) {
+            targetIndexPose = getSpinnyPose() + (int) Math.round((0.833 - indexerPose)*537.7);
+        }
+        else {
+            targetIndexPose = getSpinnyPose() + (int) Math.round((0.167 - indexerPose)*537.7);
+        }
+        Spinny.setTargetPosition(targetIndexPose);
+        Spinny.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Spinny.setPower(.1);
+    }
     public int getSpinnyTargetPose(int targetSlot, int zeroPose){
         indexerPose = (((getSpinnyPose() - zeroPose) / 537.7) % 1);
         if (targetSlot==1){
