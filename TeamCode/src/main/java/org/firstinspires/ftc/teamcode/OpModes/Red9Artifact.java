@@ -73,13 +73,13 @@ public final class Red9Artifact extends LinearOpMode {
 
 
         TrajectoryActionBuilder scan = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(-19, 0), Math.PI / 2);//-x=backwards
+                .strafeToLinearHeading(new Vector2d(-25, -10), Math.PI /1.6);//-x=backwards
 
         TrajectoryActionBuilder shoot1 = scan.endTrajectory().fresh()
                 .turnTo(0);
 
         TrajectoryActionBuilder preEat1 = shoot1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-39, -28), -Math.PI / 4); //(-39, 27)
+                .strafeToLinearHeading(new Vector2d(-39, -27), -Math.PI/2); //(-39, 27) -Math.PI/3
 
         TrajectoryActionBuilder eat1 = preEat1.endTrajectory().fresh()
                 .strafeToConstantHeading(new Vector2d(-26, -37));
@@ -97,8 +97,8 @@ public final class Red9Artifact extends LinearOpMode {
         TrajectoryActionBuilder shoot3 = eat2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-19, 0), 0);
 
-        TrajectoryActionBuilder park = shoot3.endTrajectory().fresh()
-                .strafeTo(new Vector2d(-19, -20)); //-y=right
+        TrajectoryActionBuilder park = shoot1.endTrajectory().fresh()
+                .strafeTo(new Vector2d(-19, -25)); //-y=right
 
         Action Scan = scan.build();
         Action Shoot1 = shoot1.build();
@@ -231,7 +231,8 @@ public final class Red9Artifact extends LinearOpMode {
         waitForStart();
 
         indexer.secondStageOn();
-
+        indexer.flapUp();
+        indexer.flapDown();
         Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(
@@ -471,17 +472,18 @@ public final class Red9Artifact extends LinearOpMode {
                 )
         );
  */
-        //indexer.runSpinny(179);
-        indexer.intakeOn();
+        indexer.runSpinny(179);
+        //indexer.intakeOn();
         indexer.secondStageOn();
 
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(0),
-                        PreEat1
+                        Park
 
                 )
         );
+        /*
 
         Actions.runBlocking(
                 new SequentialAction(
@@ -530,6 +532,7 @@ public final class Red9Artifact extends LinearOpMode {
 
                 )
         );
+        */
 
     };
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -23,8 +25,15 @@ public class Indexer {
     private CRServo Intake2;
     private DigitalChannel Switchy;
     private RevColorSensorV3 Lighty;
+    private RevColorSensorV3 Lighty2;
+    private RevColorSensorV3 Lighty3;
+    private OctoQuad Octoquad;
+    private final OctoQuad.EncoderDataBlock block = new OctoQuad.EncoderDataBlock();
     double indexerPose;
     int targetIndexPose;
+    int nearestGreen;
+    int nearestPurple;
+
 
     public void init(HardwareMap hwMap){
         Spinny = hwMap.get(DcMotorEx.class, "indexer");
@@ -37,6 +46,17 @@ public class Indexer {
         Switchy = hwMap.get(DigitalChannel.class, "magneticLimitSwitch");
         Switchy.setMode(DigitalChannel.Mode.INPUT);
         Lighty = hwMap.get(RevColorSensorV3.class, "colorSensor");
+        Lighty2 = hwMap.get(RevColorSensorV3.class, "colorSensor2");
+        Lighty3= hwMap.get(RevColorSensorV3.class, "colorSensor3");
+        Octoquad = hwMap.get(OctoQuad.class, "Octoquad");
+        Octoquad.setChannelBankConfig(OctoQuad.ChannelBankConfig.ALL_PULSE_WIDTH);
+        Octoquad.setSingleChannelPulseWidthParams(0,1,1024);
+
+    }
+
+    public int getPosition(){
+        Octoquad.readAllEncoderData(block);
+        return block.positions[0];
     }
 
     public void intakeOn(){
@@ -82,7 +102,7 @@ public class Indexer {
         }
         Spinny.setTargetPosition(targetIndexPose);
         Spinny.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Spinny.setPower(.05);
+        Spinny.setPower(.5);
     }
     public void runSpinnyToPoseAuto(int targetSlot, int zeroPose){
         indexerPose = (((getSpinnyPose() - zeroPose) / 537.7) % 1);
@@ -178,6 +198,44 @@ public class Indexer {
             //empty
         }
     }
+    public int readColor2(){
+        if(Lighty2.green()+Lighty2.blue()>2000){
+            if(Lighty2.green()>Lighty2.blue()){
+                return 1;
+                //green
+            }else{
+                return 2;
+                //purple
+            }
+        }else{
+            return 0;
+            //empty
+        }
+    }
+
+    public int readColor3(){
+        if(Lighty3.green()+Lighty3.blue()>2000){
+            if(Lighty3.green()>Lighty3.blue()){
+                return 1;
+                //green
+            }else{
+                return 2;
+                //purple
+            }
+        }else{
+            return 0;
+            //EMPTY
+        }
+    }
+
+    public boolean isIntakeFull(){
+        Lighty3.getDistance(DistanceUnit.CM);
+       if(Lighty3.getDistance(DistanceUnit.CM)<19){
+           return true;
+       }else{
+           return false;
+       }
+    }
     public int updateColor(int color){
         if (Lighty.green()+Lighty.blue()>2000){
             if (Lighty.green()>Lighty.blue()){
@@ -219,4 +277,101 @@ public class Indexer {
         }
         return colors;
     }
+
+    public int nearestGreen(int zeroPose, int[] colors) {
+        indexerPose = (((getSpinnyPose() - zeroPose) / 537.7) % 1);
+        if (0.333 < indexerPose && indexerPose < 0.667) {
+            if (colors[0]==1){
+                nearestGreen=1;
+            } else if (indexerPose-0.333 < 0.667-indexerPose && colors[2]==1){
+                nearestGreen=3;
+            } else if (indexerPose-0.333 > 0.667-indexerPose && colors[1]==1){
+                nearestGreen=2;
+            } else if ( colors[2]==1){
+                nearestGreen=3;
+            } else if ( colors[1]==1){
+                nearestGreen=2;
+            } else{
+                nearestGreen=4;
+            }
+        } else if (0.667 < indexerPose && indexerPose < 1) {
+            if (colors[1]==1){
+                nearestGreen=2;
+            } else if (indexerPose-0.667 < 1-indexerPose && colors[0]==1){
+                nearestGreen=1;
+            } else if (indexerPose-0.667 > 1-indexerPose && colors[2]==1){
+                nearestGreen=3;
+            } else if ( colors[2]==1){
+                nearestGreen=3;
+            } else if ( colors[0]==1){
+                nearestGreen=2;
+            } else{
+                nearestGreen=4;
+            }
+        } else if (0 < indexerPose && indexerPose < 0.333) {
+            if (colors[2]==1){
+                nearestGreen=3;
+            } else if (indexerPose-0 < 0.333-indexerPose && colors[1]==1){
+                nearestGreen=2;
+            } else if (indexerPose-0 > 0.333-indexerPose && colors[0]==1){
+                nearestGreen=1;
+            } else if ( colors[0]==1){
+                nearestGreen=3;
+            } else if ( colors[1]==1){
+                nearestGreen=2;
+            } else{
+                nearestGreen=4;
+            }
+        }
+        return nearestGreen;
+    }
+
+    public int nearestPurple(int zeroPose, int[] colors) {
+        indexerPose = (((getSpinnyPose() - zeroPose) / 537.7) % 1);
+        if (0.333 < indexerPose && indexerPose < 0.667) {
+            if (colors[0]==2){
+                nearestPurple=1;
+            } else if (indexerPose-0.333 < 0.667-indexerPose && colors[2]==2){
+                nearestPurple=3;
+            } else if (indexerPose-0.333 > 0.667-indexerPose && colors[1]==2){
+                nearestPurple=2;
+            } else if ( colors[2]==2){
+                nearestPurple=3;
+            } else if ( colors[1]==2){
+                nearestPurple=2;
+            } else{
+                nearestPurple=4;
+            }
+        } else if (0.667 < indexerPose && indexerPose < 1) {
+            if (colors[1]==2){
+                nearestPurple=2;
+            } else if (indexerPose-0.667 < 1-indexerPose && colors[0]==2){
+                nearestPurple=1;
+            } else if (indexerPose-0.667 > 1-indexerPose && colors[2]==2){
+                nearestPurple=3;
+            } else if ( colors[2]==1){
+                nearestPurple=3;
+            } else if ( colors[0]==1){
+                nearestPurple=2;
+            } else{
+                nearestPurple=4;
+            }
+        } else if (0 < indexerPose && indexerPose < 0.333) {
+            if (colors[2]==2){
+                nearestPurple=3;
+            } else if (indexerPose-0 < 0.333-indexerPose && colors[1]==2){
+                nearestPurple=2;
+            } else if (indexerPose-0 > 0.333-indexerPose && colors[0]==2){
+                nearestPurple=1;
+            } else if ( colors[0]==2){
+                nearestPurple=3;
+            } else if ( colors[1]==2){
+                nearestPurple=2;
+            } else{
+                nearestPurple=4;
+            }
+        }
+        return nearestPurple;
+    }
+
 }

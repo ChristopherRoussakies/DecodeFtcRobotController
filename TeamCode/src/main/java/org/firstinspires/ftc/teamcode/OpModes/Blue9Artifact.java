@@ -97,7 +97,7 @@ public final class Blue9Artifact extends LinearOpMode {
         TrajectoryActionBuilder shoot3 = eat2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-19, 0), 0);
 
-        TrajectoryActionBuilder park = shoot3.endTrajectory().fresh()
+        TrajectoryActionBuilder park = shoot1.endTrajectory().fresh()
                 .strafeTo(new Vector2d(-19, 25)); //-y=right
 
         Action Scan = scan.build();
@@ -470,36 +470,133 @@ public final class Blue9Artifact extends LinearOpMode {
 
                 )
         );
- */
-        indexer.runSpinny(179);
-        indexer.intakeOn();
-        indexer.secondStageOn();
+
+        //indexer.runSpinny(150);
+       // indexer.intakeOn();
+        //indexer.secondStageOn();
 
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(0),
-                        PreEat1
+                        Park
 
                 )
         );
 
-        Actions.runBlocking(
+        /*Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(0),
                         Eat1
 
                 )
-        );
+        );*/
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        new SleepAction(0),
-                        Shoot2
+       /* Actions.runBlocking(
+                new ParallelAction(
+                        new SequentialAction(
+                                spinShooterUp,
+                                sortIndexer,
+                                stopIndexer
+                        )
+                        ,
+                        new SequentialAction(
+                                // Add initial wait here
+                                new SleepAction(0),//_____ Adjust Delay
+                                //Drives the robot off the goal and faces the obelisk
+                                Eat1
 
+
+                        )
                 )
         );
 
-        Actions.runBlocking(
+        if (pattern==1){
+            Actions.runBlocking(
+                    new SequentialAction(
+                            new ParallelAction(
+                                    Shoot2
+                                    ,
+                                    loadGreen
+                            ),
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5)
+                    )
+
+            );
+        } else if (pattern==2){
+            Actions.runBlocking(
+                    new SequentialAction(
+                            new ParallelAction(
+                                    Shoot2
+                                    ,
+                                    loadPurple
+                            ),
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5),
+                            loadGreen,
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5)
+                    )
+
+            );
+        } else {
+            Actions.runBlocking(
+                    new SequentialAction(
+                            new ParallelAction(
+                                    Shoot2
+                                    ,
+                                    loadPurple
+                            ),
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5),
+                            loadPurple,
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5),
+                            loadGreen,
+                            shooterFlapUp,
+                            new SleepAction(0.5),
+                            shooterFlapDown,
+                            new SleepAction(0.5)
+                    )
+
+            );
+        }
+       /* Actions.runBlocking(
+                new SequentialAction(
+                        new SleepAction(.5),
+                        Shoot2
+
+                )
+        );*/
+
+
+
+        /*Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(0),
                         PreEat2
@@ -530,6 +627,7 @@ public final class Blue9Artifact extends LinearOpMode {
 
                 )
         );
+        */
 
     };
 

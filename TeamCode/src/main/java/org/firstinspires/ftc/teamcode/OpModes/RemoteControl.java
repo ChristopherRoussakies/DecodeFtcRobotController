@@ -43,6 +43,8 @@ public class RemoteControl extends OpMode {
     Indexer index = new Indexer();
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
+    int nearestGreen;
+    int nearestPurple;
 
     @Override
     public void init(){
@@ -166,35 +168,37 @@ public class RemoteControl extends OpMode {
         // Rotates to that slot then vibrates controller
         if (gamepad1.dpad_left){
             indexerAuto = true;
-            if (colors[0]==1){
+            nearestGreen=index.nearestGreen(indexerZero, colors);
+            if (nearestGreen==1){
                 index.runSpinnyToPose(1, indexerZero);
                 telemetry.addData("LOADING GREEN", "SLOT 1");
             }
-            else if (colors[1]==1){
+            else if (nearestGreen==2){
                 index.runSpinnyToPose(2, indexerZero);
                 telemetry.addData("LOADING GREEN", "SLOT 2");
             }
-            else if (colors[2]==1){
+            else if (nearestGreen==3){
                 index.runSpinnyToPose(3, indexerZero);
                 telemetry.addData("LOADING GREEN", "SLOT 3");
             }
             else{
-                    telemetry.addData("ERROR","NO GREEN");
+                telemetry.addData("ERROR","NO GREEN");
             }
         }
 
         // Load Purple
         if (gamepad1.dpad_right){
             indexerAuto = true;
-            if (colors[0]==2){
+            nearestPurple=index.nearestPurple(indexerZero, colors);
+            if (nearestPurple==1){
                 index.runSpinnyToPose(1, indexerZero);
                 telemetry.addData("LOADING PUPRLE", "SLOT 1");
             }
-            else if (colors[1]==2){
+            else if (nearestPurple==2){
                 index.runSpinnyToPose(2, indexerZero);
                 telemetry.addData("LOADING PUPRLE", "SLOT 2");
             }
-            else if (colors[2]==2){
+            else if (nearestPurple==3){
                 index.runSpinnyToPose(3, indexerZero);
                 telemetry.addData("LOADING PUPRLE", "SLOT 3");
             }
@@ -232,6 +236,7 @@ public class RemoteControl extends OpMode {
         telemetry.addData("x", pose.position.x);
         telemetry.addData("y", pose.position.y);
         telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+        telemetry.addData("IndererRevEncoder",index.getPosition());
         telemetry.update();
     }
 
