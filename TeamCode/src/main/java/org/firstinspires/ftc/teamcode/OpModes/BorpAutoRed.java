@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import java.util.List;
 
 @Autonomous
-public class BorpAutoBlue extends LinearOpMode {
+public class BorpAutoRed extends LinearOpMode {
     private Limelight3A limelight;
     LLResult result;
     int pattern = 1;
@@ -49,23 +49,23 @@ public class BorpAutoBlue extends LinearOpMode {
 
 
         TrajectoryActionBuilder scan = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(-25, 0), -Math.PI /2.1);//-x=backwards was -19
+                .strafeToLinearHeading(new Vector2d(-25, 0), Math.PI / 2);//-x=backwards was -19
 
         TrajectoryActionBuilder shoot1 = scan.endTrajectory().fresh()
-                .turnTo(Math.toRadians(15)); //was 10
+                .turnTo(-Math.PI/13); //was pi/11
 
         TrajectoryActionBuilder preEat1 = shoot1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-45, 25), Math.PI / 4.5); //(-39, 27)
+                .strafeToLinearHeading(new Vector2d(-40, -27), -Math.PI / 4); //(-39, 27)
 
         TrajectoryActionBuilder eat1 = preEat1.endTrajectory().fresh()
-                .strafeToConstantHeading(new Vector2d(-22, 37));
+                .strafeToConstantHeading(new Vector2d(-24, -42));
         new TranslationalVelConstraint(15);
 
         TrajectoryActionBuilder eat1a = eat1.endTrajectory().fresh()
-                .strafeToConstantHeading(new Vector2d(-22, 37));
+                .strafeToConstantHeading(new Vector2d(-23, 37));
 
         TrajectoryActionBuilder shoot2 = eat1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-19, 0), 0);
+                .strafeToLinearHeading(new Vector2d(-19, 0), -Math.PI/12);
 
         TrajectoryActionBuilder preEat2 = shoot2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-53, 43), Math.PI / 4);
@@ -91,7 +91,7 @@ public class BorpAutoBlue extends LinearOpMode {
         Action Park = park.build();
 
         Action startShooter = packet -> {
-            shoot.setShooterSpeed(2100);
+            shoot.setShooterSpeed(2200);
             return false;
         };
 
@@ -224,35 +224,35 @@ public class BorpAutoBlue extends LinearOpMode {
                 intakeTime = getRuntime();
                 intakeStarted=true;
             }
-           if (restartTimer) {
-               runtime=getRuntime();
-               restartTimer=false;
-           }
-           // TUNE TIME IN NEXT LINE FOR TIME BETWEEN ROTATIONS
-           if (getRuntime()-runtime>1.5){
-               if (lastLoadSlot==1){
-                   index.indexerLoad2();
-                   lastLoadSlot=2;
-               } else if(lastLoadSlot==2){
-                   index.indexerLoad3();
-                   lastLoadSlot=3;
-               } else if (lastLoadSlot==3){
-                   index.indexerLoad1();
-                   lastLoadSlot=1;
-               }
-               restartTimer=true;
-           } else if (getRuntime()-runtime>1) {
-               if (index.getIndexerPosition()-index.getTargetPosition()>0) {
-                   index.setTarget(index.getTargetPosition() - 10);
-               }
-               else{
-                   index.setTarget(index.getTargetPosition() + 10);
-               }
-           }
+            if (restartTimer) {
+                runtime=getRuntime();
+                restartTimer=false;
+            }
+            // TUNE TIME IN NEXT LINE FOR TIME BETWEEN ROTATIONS
+            if (getRuntime()-runtime>1.5){
+                if (lastLoadSlot==1){
+                    index.indexerLoad2();
+                    lastLoadSlot=2;
+                } else if(lastLoadSlot==2){
+                    index.indexerLoad3();
+                    lastLoadSlot=3;
+                } else if (lastLoadSlot==3){
+                    index.indexerLoad1();
+                    lastLoadSlot=1;
+                }
+                restartTimer=true;
+            } else if (getRuntime()-runtime>1) {
+                if (index.getIndexerPosition()-index.getTargetPosition()>0) {
+                    index.setTarget(index.getTargetPosition() - 10);
+                }
+                else{
+                    index.setTarget(index.getTargetPosition() + 10);
+                }
+            }
             index.updateIndexer();
-           colors=index.readIndexerColors(colors);
-           //TUNE TIME IN NEXT LINE FOR MAX TIME SPENT INTAKING
-           return((colors[0]==0 || colors[1]==0 || colors[2]==0) && getRuntime()-intakeTime<6);
+            colors=index.readIndexerColors(colors);
+            //TUNE TIME IN NEXT LINE FOR MAX TIME SPENT INTAKING
+            return((colors[0]==0 || colors[1]==0 || colors[2]==0) && getRuntime()-intakeTime<6);
         };
 
         Action extrapolateFromIncompleteData = packet -> {
@@ -345,9 +345,9 @@ public class BorpAutoBlue extends LinearOpMode {
                             loadPurple,
                             runIndexer,
                             flipperUp,
-                           flipperDown,
-                           intakeOn,
-                           new SequentialAction(
+                            flipperDown,
+                            intakeOn,
+                            new SequentialAction(
                                     //PreEat1,
                                     new ParallelAction(
                                             PreEat1,
@@ -359,15 +359,15 @@ public class BorpAutoBlue extends LinearOpMode {
                                             autoIntake,
                                             Eat1
                                     ),
-                                   extrapolateFromIncompleteData
-                           ),
-                                    new ParallelAction(
-                                          Shoot2,
-                                          new SequentialAction(
-                                                  loadGreen,
-                                                  runIndexer
-                                          )
-                                    ),
+                                    extrapolateFromIncompleteData
+                            ),
+                            new ParallelAction(
+                                    Shoot2,
+                                    new SequentialAction(
+                                            loadGreen,
+                                            runIndexer
+                                    )
+                            ),
                             flipperUp,
                             flipperDown,
                             loadPurple,
@@ -404,7 +404,7 @@ public class BorpAutoBlue extends LinearOpMode {
                         Park,
                         intakeSecondStageOff
                             )*/
-                           )
+                    )
 
             );
 
@@ -429,27 +429,27 @@ public class BorpAutoBlue extends LinearOpMode {
                             runIndexer,
                             flipperUp,
                             flipperDown,
-                                   intakeOn,
-                                   new SequentialAction(
-                                           new ParallelAction(
-                                                   PreEat1,
-                                                   indexerLoad1,
-                                                   runIndexer
-                                           ),
-                                           new ParallelAction(
-                                                   autoIntake,
-                                                   Eat1
-                                   ),
-                                           extrapolateFromIncompleteData
-                                   ),
-
+                            intakeOn,
+                            new SequentialAction(
                                     new ParallelAction(
-                                            Shoot2,
-                                            new SequentialAction(
-                                                    loadPurple,
-                                                    runIndexer
-                                            )
+                                            PreEat1,
+                                            indexerLoad1,
+                                            runIndexer
                                     ),
+                                    new ParallelAction(
+                                            autoIntake,
+                                            Eat1
+                                    ),
+                                    extrapolateFromIncompleteData
+                            ),
+
+                            new ParallelAction(
+                                    Shoot2,
+                                    new SequentialAction(
+                                            loadPurple,
+                                            runIndexer
+                                    )
+                            ),
                             flipperUp,
                             flipperDown,
                             loadGreen,
@@ -509,7 +509,7 @@ public class BorpAutoBlue extends LinearOpMode {
                             runIndexer,
                             flipperUp,
                             flipperDown,
-                                  intakeOn,
+                            intakeOn,
                             new SequentialAction(
                                     new ParallelAction(
                                             PreEat1,
@@ -522,13 +522,13 @@ public class BorpAutoBlue extends LinearOpMode {
                                     ),
                                     extrapolateFromIncompleteData
                             ),
-                                    new ParallelAction(
-                                            Shoot2,
-                                            new SequentialAction(
-                                                    loadPurple,
-                                                    runIndexer
-                                            )
-                                    ),
+                            new ParallelAction(
+                                    Shoot2,
+                                    new SequentialAction(
+                                            loadPurple,
+                                            runIndexer
+                                    )
+                            ),
                             flipperUp,
                             flipperDown,
                             loadPurple,

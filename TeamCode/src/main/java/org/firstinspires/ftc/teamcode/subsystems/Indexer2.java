@@ -28,12 +28,12 @@ public class Indexer2 {
     int nearestGreen;
     int nearestPurple;
 
-    public static double kp = .003;
+    public static double kp = 0.001;
     public static double ki = 0.0015;
-    public static double kd = 0.00015;
+    public static double kd = 0.0001;
 
     private int targetPosition = 1;
-    private int indexerOffset = 28;
+    private int indexerOffset = 32;
     private double integral = 0;
     private double lastError = 0;
     public static double maxIntegral = 100;
@@ -88,7 +88,7 @@ public class Indexer2 {
         targetPosition = 687+indexerOffset;
         integral = 0;
     }
-    public void indexerLoad1(){
+    public void  indexerLoad1(){
         targetPosition = 516+indexerOffset;
         integral = 0;
     }
@@ -115,13 +115,17 @@ public class Indexer2 {
 
     public double updateIndexer(){
         Octoquad.readAllEncoderData(block);
+        double currentPosition = block.positions[0];
+        double error = targetPosition-currentPosition;
+        if (block.positions[0]<1 || block.positions[0]>1030){
+            Spinny.setPower(0);
+            return lastError;
+        }
         double dt = timer.seconds();
         if (dt==0){
             dt = 0.001;
         }
         timer.reset();
-        double currentPosition = block.positions[0];
-        double error = targetPosition-currentPosition;
         if (error>512){
             error = error - 1024;
         } else if (error<-512) {
@@ -131,16 +135,48 @@ public class Indexer2 {
         if (Math.abs(integral)> maxIntegral){
             integral = maxIntegral;
         }
-        double derivative = (error - lastError)/dt;
+        double derivative = (error - lastError)/(dt);
         double power = kp*error + ki*integral + kd*derivative;
         power = Math.max(-1, Math.min(1, power));
-        if (block.positions[0]<1 || block.positions[0]>1030){
-            power=0;
-        }
         Spinny.setPower(power);
         lastError=error;
         return error;
     }
+
+    public boolean updateIndexerAuto(){
+        Octoquad.readAllEncoderData(block);
+        double currentPosition = block.positions[0];
+        double error = targetPosition-currentPosition;
+        if (block.positions[0]<1 || block.positions[0]>1030){
+            Spinny.setPower(0);
+            return true;
+        }
+        double dt = timer.seconds();
+        if (dt==0){
+            dt = 0.001;
+        }
+        timer.reset();
+        if (error>512){
+            error = error - 1024;
+        } else if (error<-512) {
+            error = error + 1024;
+        }
+        integral += error*dt;
+        if (Math.abs(integral)> maxIntegral){
+            integral = maxIntegral;
+        }
+        double derivative = (error - lastError)/(dt);
+        double power = kp*error + ki*integral + kd*derivative;
+        power = Math.max(-1, Math.min(1, power));
+        Spinny.setPower(power);
+        boolean runAgain = true;
+        if(Math.abs(lastError)<8 && Math.abs(error)<8){
+            runAgain = false;
+        }
+        lastError=error;
+        return runAgain;
+    }
+
     public int getTargetPosition(){
         return targetPosition;
     }
@@ -358,6 +394,9 @@ public class Indexer2 {
     }
     public void secondIntakeStageOn(){
         Intake2.setPower(-1);
+    }
+    public void secondIntakeStageOff(){
+        Intake2.setPower(0);
     }
     public void intakeOff(){
         Intake.setVelocity(0);

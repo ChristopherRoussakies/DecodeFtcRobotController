@@ -106,7 +106,7 @@ public class Borp extends OpMode {
                 index.secondIntakeStageOn();
                 index.updateIndexer();
                 index.flapDown();
-                shoot.setShooterSpeed(2300);
+                shoot.setShooterSpeed(2100);
                 if (gamepad1.dpad_right){
                     shootSlot=index.nearestArtifact(colors);
                     if (shootSlot==0){
@@ -150,7 +150,7 @@ public class Borp extends OpMode {
 
             case FEED_ONE:
                 index.secondIntakeStageOn();
-                index.updateIndexer();
+                //index.updateIndexer();
                 if (Math.abs(index.updateIndexer())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
@@ -161,7 +161,7 @@ public class Borp extends OpMode {
 
             case FEED_TWO:
                 index.secondIntakeStageOn();
-                index.updateIndexer();
+                //index.updateIndexer();
                 if (Math.abs(index.updateIndexer())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
@@ -172,7 +172,7 @@ public class Borp extends OpMode {
 
             case FEED_THREE:
                 index.secondIntakeStageOn();
-                index.updateIndexer();
+                //index.updateIndexer();
                 if (Math.abs(index.updateIndexer())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
@@ -261,7 +261,7 @@ public class Borp extends OpMode {
         telemetry.addData("Indexer Slot 1:", colors[2]);
         telemetry.addData("Indexer Position:",index.getIndexerPosition());
         telemetry.addData("Indexer Target", index.getTargetPosition());
-        telemetry.addData("Indexer Error", index.updateIndexer());
+        //telemetry.addData("Indexer Error", index.updateIndexer());
         telemetry.addData("Shooter Slot", shootSlot);
         telemetry.addData("Current State", state);
         telemetry.addData("Hamburger Flipper Position", index.getFlappyPose());
