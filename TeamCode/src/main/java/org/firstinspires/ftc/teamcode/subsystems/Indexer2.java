@@ -65,6 +65,64 @@ public class Indexer2 {
 
         timer.reset();
     }
+    public void initIndexerMode2(HardwareMap hwMap){
+        Spinny = hwMap.get(DcMotorEx.class, "indexer");
+        Spinny.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        Intake = hwMap.get(DcMotorEx.class, "intake");
+        Intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        Flappy = hwMap.get(Servo.class, "indexerServo");
+        Flappy2 = hwMap.get(Servo.class, "indexerServo2");
+        FlappyFeedback = hwMap.get(AnalogInput.class,"indexerServoSensor");
+
+        Intake2 = hwMap.get(CRServo.class, "intakeServo");
+
+        Lighty = hwMap.get(RevColorSensorV3.class, "colorSensor");
+        Lighty2 = hwMap.get(RevColorSensorV3.class, "colorSensor2");
+        Lighty3= hwMap.get(RevColorSensorV3.class, "colorSensor3");
+
+        Octoquad = hwMap.get(OctoQuad.class, "Octoquad");
+        Octoquad.setChannelBankConfig(OctoQuad.ChannelBankConfig.ALL_PULSE_WIDTH);
+        Octoquad.setSingleChannelPulseWidthParams(0,1,1024);
+
+        timer.reset();
+    }
+    public void runIndexerMode2(){
+        double distance = targetPosition-getIndexerPosition();
+        int convDistance;
+        if (distance>512){
+            convDistance = (int)Math.round(537.7*(distance - 1024)/1024);
+        } else if (distance<-512) {
+            convDistance = (int)Math.round(537.7*(distance + 1024)/1024);
+        } else{
+            convDistance = (int)Math.round(537.7*(distance)/1024);
+        }
+        Spinny.setTargetPosition(convDistance);
+        Spinny.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Spinny.setPower(.25);
+    }
+    public int checkIndexerErrorMode2(){
+        return Math.abs(Spinny.getTargetPosition()- Spinny.getCurrentPosition());
+    }
+    public void indexerShoot1Mode2(){
+        targetPosition = 1+indexerOffset;
+    }
+    public void indexerShoot2Mode2(){
+        targetPosition = 344+indexerOffset;
+    }
+    public void indexerShoot3Mode2(){
+        targetPosition = 687+indexerOffset;
+    }
+    public void  indexerLoad1Mode2(){
+        targetPosition = 516+indexerOffset;
+    }
+    public void indexerLoad2Mode2(){
+        targetPosition = 859+indexerOffset;
+    }
+    public void indexerLoad3Mode2(){
+        targetPosition = 173+indexerOffset;
+    }
 
     // HAMBURGER INDEXER
     public int getIndexerPosition(){

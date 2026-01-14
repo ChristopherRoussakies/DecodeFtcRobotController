@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -14,6 +18,13 @@ public class Shooter {
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
     private CRServo feedservo;
+    private Limelight3A limelight;
+    LLResult result;
+
+    double limelightAngle=21;
+    double limelightHeight=12;
+    double targetHeight=29.5;
+
 
 
     public void init(HardwareMap hwMap){
@@ -28,6 +39,24 @@ public class Shooter {
 
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
         //shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        limelight = hwMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0);
+        limelight.start();
+    }
+
+    public double limelightRangeAndHeading(){
+        result = limelight.getLatestResult();
+        List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+        double distanceToGoal=0;
+        for (LLResultTypes.FiducialResult fr : fiducialResults) {
+
+            if (fr.getFiducialId() == 20 || fr.getFiducialId() == 24) {
+                double angleToGoal=(fr.getTargetYDegrees()+limelightAngle)*(3.14/180);
+                distanceToGoal=(targetHeight-limelightHeight)/Math.tan(angleToGoal);
+            }
+        }
+        return distanceToGoal;
     }
 
     public void feedServoOn(){
