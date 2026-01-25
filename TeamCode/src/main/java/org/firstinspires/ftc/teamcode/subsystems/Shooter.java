@@ -22,7 +22,7 @@ public class Shooter {
     LLResult result;
 
     double limelightAngle=21;
-    double limelightHeight=12;
+    double limelightHeight=9.875;
     double targetHeight=29.5;
 
 
@@ -37,11 +37,11 @@ public class Shooter {
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+        //shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
         //shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         limelight = hwMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(1);
         limelight.start();
     }
 
@@ -52,7 +52,7 @@ public class Shooter {
         for (LLResultTypes.FiducialResult fr : fiducialResults) {
 
             if (fr.getFiducialId() == 20 || fr.getFiducialId() == 24) {
-                double angleToGoal=(fr.getTargetYDegrees()+limelightAngle)*(3.14/180);
+                double angleToGoal=(-fr.getTargetYDegrees()+limelightAngle)*(3.14/180);
                 distanceToGoal=(targetHeight-limelightHeight)/Math.tan(angleToGoal);
             }
         }

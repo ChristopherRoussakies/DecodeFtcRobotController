@@ -155,31 +155,166 @@ public class BORP2 extends OpMode {
 
             case FEED_ONE:
                 index.secondIntakeStageOn();
-                if (index.checkIndexerErrorMode2()<5 && gamepad1.right_bumper){
+                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
+                    gamepad1.rumble(500);
+                }
+                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
                     timer.reset();
                     colors[0]=0;
                 }
+                if (gamepad1.dpad_right){
+                    shootSlot=index.nearestArtifact(colors);
+                    if (shootSlot==0){
+                        if (lastFailsafeSlot==1){
+                            lastFailsafeSlot=2;
+                            shootSlot=2;
+                        }
+                        else if (lastFailsafeSlot==2){
+                            lastFailsafeSlot=3;
+                            shootSlot=3;
+                        }
+                        else if (lastFailsafeSlot==3){
+                            lastFailsafeSlot=1;
+                            shootSlot=1;
+                        }
+                    }
+                }
+                else if (gamepad1.dpad_up){
+                    shootSlot=index.nearestGreen(colors);
+                }
+                else if (gamepad1.dpad_down){
+                    shootSlot=index.nearestPurple(colors);
+                }
+
+                if (shootSlot==1){
+                    state = State.FEED_ONE;
+                    index.indexerShoot1Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
+                else if (shootSlot==2){
+                    state = State.FEED_TWO;
+                    index.indexerShoot2Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
+                else if (shootSlot==3){
+                    state = State.FEED_THREE;
+                    index.indexerShoot3Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
                 break;
 
             case FEED_TWO:
                 index.secondIntakeStageOn();
-                if (index.checkIndexerErrorMode2()<5 && gamepad1.right_bumper){
+                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
+                    gamepad1.rumble(500);
+                }
+                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
                     timer.reset();
                     colors[1]=0;
                 }
+                if (gamepad1.dpad_right){
+                    shootSlot=index.nearestArtifact(colors);
+                    if (shootSlot==0){
+                        if (lastFailsafeSlot==1){
+                            lastFailsafeSlot=2;
+                            shootSlot=2;
+                        }
+                        else if (lastFailsafeSlot==2){
+                            lastFailsafeSlot=3;
+                            shootSlot=3;
+                        }
+                        else if (lastFailsafeSlot==3){
+                            lastFailsafeSlot=1;
+                            shootSlot=1;
+                        }
+                    }
+                }
+                else if (gamepad1.dpad_up){
+                    shootSlot=index.nearestGreen(colors);
+                }
+                else if (gamepad1.dpad_down){
+                    shootSlot=index.nearestPurple(colors);
+                }
+
+                if (shootSlot==1){
+                    state = State.FEED_ONE;
+                    index.indexerShoot1Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
+                else if (shootSlot==2){
+                    state = State.FEED_TWO;
+                    index.indexerShoot2Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
+                else if (shootSlot==3){
+                    state = State.FEED_THREE;
+                    index.indexerShoot3Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
                 break;
 
             case FEED_THREE:
                 index.secondIntakeStageOn();
-                if (index.checkIndexerErrorMode2()<5 && gamepad1.right_bumper){
+                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
+                    gamepad1.rumble(500);
+                }
+                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
                     timer.reset();
                     colors[2]=0;
+                }
+                if (gamepad1.dpad_right){
+                    shootSlot=index.nearestArtifact(colors);
+                    if (shootSlot==0){
+                        if (lastFailsafeSlot==1){
+                            lastFailsafeSlot=2;
+                            shootSlot=2;
+                        }
+                        else if (lastFailsafeSlot==2){
+                            lastFailsafeSlot=3;
+                            shootSlot=3;
+                        }
+                        else if (lastFailsafeSlot==3){
+                            lastFailsafeSlot=1;
+                            shootSlot=1;
+                        }
+                    }
+                }
+                else if (gamepad1.dpad_up){
+                    shootSlot=index.nearestGreen(colors);
+                }
+                else if (gamepad1.dpad_down){
+                    shootSlot=index.nearestPurple(colors);
+                }
+
+                if (shootSlot==1){
+                    state = State.FEED_ONE;
+                    index.indexerShoot1Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
+                else if (shootSlot==2){
+                    state = State.FEED_TWO;
+                    index.indexerShoot2Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
+                }
+                else if (shootSlot==3){
+                    state = State.FEED_THREE;
+                    index.indexerShoot3Mode2();
+                    index.runIndexerMode2();
+                    shootSlot=0;
                 }
                 break;
 
@@ -200,22 +335,28 @@ public class BORP2 extends OpMode {
                     index.flapDown();
                 }
                 if (gamepad2.a){
-                    index.indexerLoad1();
+                    index.indexerLoad1Mode2();
+                    index.runIndexerMode2();
                 }
                 if (gamepad2.b){
-                    index.indexerLoad2();
+                    index.indexerLoad2Mode2();
+                    index.runIndexerMode2();
                 }
                 if (gamepad2.x){
-                    index.indexerLoad3();
+                    index.indexerLoad3Mode2();
+                    index.runIndexerMode2();
                 }
                 if (gamepad2.dpad_left){
-                    index.indexerShoot1();
+                    index.indexerShoot1Mode2();
+                    index.runIndexerMode2();
                 }
                 if (gamepad2.dpad_up){
-                    index.indexerShoot2();
+                    index.indexerShoot2Mode2();
+                    index.runIndexerMode2();
                 }
                 if (gamepad2.dpad_right){
-                    index.indexerShoot3();
+                    index.indexerShoot3Mode2();
+                    index.runIndexerMode2();
                 }
                 if (gamepad2.left_stick_button && !lastLSState){
                     shooterSpeed-=100;
@@ -225,7 +366,13 @@ public class BORP2 extends OpMode {
                     shooterSpeed+=100;
                 }
                 lastRSState=gamepad2.right_stick_button;
-                shoot.setShooterSpeed(Math.min(shooterSpeed,0));
+                if (gamepad2.right_trigger>0.5){
+                    shooterSpeed=1000;
+                }
+                if (gamepad2.left_trigger>0.5){
+                    shooterSpeed=0;
+                }
+                shoot.setShooterSpeed(Math.max(shooterSpeed,0));
                 break;
         }
         if (gamepad1.dpad_left){
@@ -271,6 +418,7 @@ public class BORP2 extends OpMode {
         telemetry.addData("Indexer Position:",index.getIndexerPosition());
         telemetry.addData("Indexer Target", index.getTargetPosition());
         telemetry.addData("Indexer Error", index.getTargetPosition()-index.getIndexerPosition());
+        telemetry.addData("Indexer Speed", index.checkIndexerVelocityMode2());
         telemetry.addData("Shooter Slot", shootSlot);
         telemetry.addData("Current State", state);
         telemetry.addData("Hamburger Flipper Position", index.getFlappyPose());

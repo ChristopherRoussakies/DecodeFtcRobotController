@@ -33,7 +33,7 @@ public class Indexer2 {
     public static double kd = 0.0001;
 
     private int targetPosition = 1;
-    private int indexerOffset = 32;
+    private int indexerOffset = 31;
     private double integral = 0;
     private double lastError = 0;
     public static double maxIntegral = 100;
@@ -98,12 +98,16 @@ public class Indexer2 {
         } else{
             convDistance = (int)Math.round(537.7*(distance)/1024);
         }
-        Spinny.setTargetPosition(convDistance);
+        Spinny.setTargetPosition(convDistance + Spinny.getCurrentPosition());
         Spinny.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Spinny.setPower(.25);
+        Spinny.setPower(.25); //increase and decrease to see which feels most snap to position-y
     }
     public int checkIndexerErrorMode2(){
         return Math.abs(Spinny.getTargetPosition()- Spinny.getCurrentPosition());
+    }
+
+    public double checkIndexerVelocityMode2(){
+        return Math.abs(Spinny.getVelocity());
     }
     public void indexerShoot1Mode2(){
         targetPosition = 1+indexerOffset;
