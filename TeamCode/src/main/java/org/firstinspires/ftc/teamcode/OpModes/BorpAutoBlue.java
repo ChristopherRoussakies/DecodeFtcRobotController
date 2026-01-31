@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 import java.util.List;
 
-@Autonomous
+//@Autonomous
 public class BorpAutoBlue extends LinearOpMode {
     private Limelight3A limelight;
     LLResult result;

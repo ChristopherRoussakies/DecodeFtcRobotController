@@ -66,7 +66,7 @@ public class MEGABORPAUTORED2 extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(-23, 37));
 
         TrajectoryActionBuilder shoot2 = eat1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-19, 0), -Math.PI/12);
+                .strafeToLinearHeading(new Vector2d(-19, 0), -Math.PI/13);
 
         TrajectoryActionBuilder preEat2 = shoot2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-57, -42), -Math.PI / 4);

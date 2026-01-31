@@ -33,7 +33,7 @@ public class Indexer2 {
     public static double kd = 0.0001;
 
     private int targetPosition = 1;
-    private int indexerOffset = 31;
+    private int indexerOffset = 30;
     private double integral = 0;
     private double lastError = 0;
     public static double maxIntegral = 100;
@@ -100,7 +100,10 @@ public class Indexer2 {
         }
         Spinny.setTargetPosition(convDistance + Spinny.getCurrentPosition());
         Spinny.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Spinny.setPower(.25); //increase and decrease to see which feels most snap to position-y
+        Spinny.setPower(.25); //increase and decrease to see which feels most snap to position-y was .25
+    }
+    public void modifyIndexerPower(double p){
+        Spinny.setPower(.25+.25*p);
     }
     public int checkIndexerErrorMode2(){
         return Math.abs(Spinny.getTargetPosition()- Spinny.getCurrentPosition());

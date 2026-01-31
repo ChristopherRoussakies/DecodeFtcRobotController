@@ -45,9 +45,11 @@ public class BORP2 extends OpMode {
     int lastFailsafeSlot = 1;
     int shooterSpeed=0;
     boolean lastLBState;
+    boolean lastLBState2;
 
     boolean lastRSState;
     boolean lastLSState;
+    boolean flipperUp;
 
 
 
@@ -75,7 +77,7 @@ public class BORP2 extends OpMode {
                 index.secondIntakeStageOn();
                 index.flapDown();
                 shoot.setShooterSpeed(0);
-                if (gamepad1.left_bumper && !lastLBState){
+                if ((gamepad1.left_bumper && !lastLBState)||(gamepad2.left_bumper && !lastLBState2)){
                     if (intakeSlot==1){
                         intakeSlot=2;
                         index.indexerLoad2Mode2();
@@ -91,6 +93,7 @@ public class BORP2 extends OpMode {
                     index.runIndexerMode2();
                 }
                 lastLBState=gamepad1.left_bumper;
+                lastLBState2=gamepad2.left_bumper;
                 break;
 
             case INTAKE_REVERSE:
@@ -108,7 +111,7 @@ public class BORP2 extends OpMode {
                 index.intakeOff();
                 index.secondIntakeStageOn();
                 index.flapDown();
-                shoot.setShooterSpeed(2100);
+                shoot.setShooterSpeed(2200); //shooter speed
                 if (gamepad1.dpad_right){
                     shootSlot=index.nearestArtifact(colors);
                     if (shootSlot==0){
@@ -155,14 +158,15 @@ public class BORP2 extends OpMode {
 
             case FEED_ONE:
                 index.secondIntakeStageOn();
-                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
+                /*if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
                     gamepad1.rumble(500);
-                }
+                }*/
                 if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
                     timer.reset();
                     colors[0]=0;
+                    flipperUp = false;
                 }
                 if (gamepad1.dpad_right){
                     shootSlot=index.nearestArtifact(colors);
@@ -210,14 +214,15 @@ public class BORP2 extends OpMode {
 
             case FEED_TWO:
                 index.secondIntakeStageOn();
-                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
+                /*if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
                     gamepad1.rumble(500);
-                }
+                }*/
                 if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
                     timer.reset();
                     colors[1]=0;
+                    flipperUp = false;
                 }
                 if (gamepad1.dpad_right){
                     shootSlot=index.nearestArtifact(colors);
@@ -265,14 +270,15 @@ public class BORP2 extends OpMode {
 
             case FEED_THREE:
                 index.secondIntakeStageOn();
-                if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
+                /*if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10){
                     gamepad1.rumble(500);
-                }
+                }*/
                 if (index.checkIndexerErrorMode2()<5 && Math.abs(index.checkIndexerVelocityMode2())<10 && gamepad1.right_bumper){
                     index.flapUp();
                     state=State.SHOOT;
                     timer.reset();
                     colors[2]=0;
+                    flipperUp = false;
                 }
                 if (gamepad1.dpad_right){
                     shootSlot=index.nearestArtifact(colors);
@@ -322,8 +328,9 @@ public class BORP2 extends OpMode {
                 index.secondIntakeStageOn();
                 if(index.getFlappyPose()>2){
                     index.flapDown();
+                    flipperUp = true;
                 }
-                if (index.getFlappyPose()<.95){
+                if (index.getFlappyPose()<.95 && flipperUp){
                     state=State.LOAD;
                 }
                 break;
@@ -375,7 +382,7 @@ public class BORP2 extends OpMode {
                 shoot.setShooterSpeed(Math.max(shooterSpeed,0));
                 break;
         }
-        if (gamepad1.dpad_left){
+        if (gamepad1.dpad_left || gamepad2.dpad_left){
             state=State.LOAD;
         }
         else if (gamepad1.a){
@@ -387,9 +394,9 @@ public class BORP2 extends OpMode {
         } else if (gamepad1.x) {
             state=State.DRIVE;
         }
-        if (gamepad2.touchpad_finger_2){
+        /*if (gamepad2.touchpad_finger_2){
             state=State.DEBUG;
-        }
+        }*/
 
         /*
 
