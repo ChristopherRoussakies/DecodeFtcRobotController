@@ -59,7 +59,7 @@ public class MEGABORPAUTORED2 extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-43, -25), -Math.PI / 4); //(-39, 27)
 
         TrajectoryActionBuilder eat1 = preEat1.endTrajectory().fresh()
-                .strafeToConstantHeading(new Vector2d(-24, -42));
+                .strafeToConstantHeading(new Vector2d(-24, -41));
         //new TranslationalVelConstraint(15);
 
         TrajectoryActionBuilder eat1a = eat1.endTrajectory().fresh()
@@ -139,11 +139,11 @@ public class MEGABORPAUTORED2 extends LinearOpMode {
         };
 
         Action runIndexer = packet -> {
-            return index.checkIndexerErrorMode2()>4 || index.checkIndexerVelocityMode2()>10;
+            return index.checkIndexerErrorMode2()>3 || index.checkIndexerVelocityMode2()>10;
         };
 
         Action flipperUp = packet -> {
-            if (index.checkIndexerErrorMode2()<4){
+            if (index.checkIndexerErrorMode2()<3){
                 index.flapUp();
             }
             return (index.getFlappyPose()<2);

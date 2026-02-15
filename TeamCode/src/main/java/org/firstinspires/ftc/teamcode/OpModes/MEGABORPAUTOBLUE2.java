@@ -49,23 +49,23 @@ public class MEGABORPAUTOBLUE2 extends LinearOpMode {
 
 
         TrajectoryActionBuilder scan = drive.actionBuilder(beginPose)
-                .strafeToLinearHeading(new Vector2d(-25, 0), -Math.PI /2.1);//-x=backwards was -19
+                .strafeToLinearHeading(new Vector2d(-25, 0), -Math.PI /2.2);//-x=backwards was -19
 
         TrajectoryActionBuilder shoot1 = scan.endTrajectory().fresh()
-                .turnTo(Math.PI/9); //was 10
+                .turnTo(Math.PI/13); //was 26
 
         TrajectoryActionBuilder preEat1 = shoot1.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-45, 25), Math.PI / 4.5); //(-39, 27)
 
         TrajectoryActionBuilder eat1 = preEat1.endTrajectory().fresh()
-                .strafeToConstantHeading(new Vector2d(-21, 39));
+                .strafeToConstantHeading(new Vector2d(-18, 37));
         //new TranslationalVelConstraint(15);
 
         TrajectoryActionBuilder eat1a = eat1.endTrajectory().fresh()
                 .strafeToConstantHeading(new Vector2d(-22, 37));
 
         TrajectoryActionBuilder shoot2 = eat1.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-25, 0), Math.PI/9);
+                .strafeToLinearHeading(new Vector2d(-25, 0), Math.PI/13 );
 
         TrajectoryActionBuilder preEat2 = shoot2.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-53, 43), Math.PI / 4);
@@ -139,11 +139,11 @@ public class MEGABORPAUTOBLUE2 extends LinearOpMode {
         };
 
         Action runIndexer = packet -> {
-            return index.checkIndexerErrorMode2()>4 || index.checkIndexerVelocityMode2()>10;
+            return index.checkIndexerErrorMode2()>3 || index.checkIndexerVelocityMode2()>10;
         };
 
         Action flipperUp = packet -> {
-            if (index.checkIndexerErrorMode2()<4){
+            if (index.checkIndexerErrorMode2()<3){
                 index.flapUp();
             }
             return (index.getFlappyPose()<2);
