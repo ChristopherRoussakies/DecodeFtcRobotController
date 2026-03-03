@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,8 @@ public class Shooter {
     private DcMotorEx shooter2;
     private CRServo feedservo;
     private Limelight3A limelight;
+
+    private Servo light;
     LLResult result;
 
     double limelightAngle=21;
@@ -31,6 +34,7 @@ public class Shooter {
         feedservo = hwMap.get(CRServo.class, "feedServo");
         shooter1 = hwMap.get(DcMotorEx.class, "shooter1");
         shooter2 = hwMap.get(DcMotorEx.class, "shooter2");
+        light = hwMap.get(Servo.class, "fwashy");
 
         //feedservo.setDirection(CRServo.Direction.REVERSE);
 
@@ -43,20 +47,36 @@ public class Shooter {
         limelight = hwMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(1);
         limelight.start();
+        light.setPosition(0);
     }
 
-    public double limelightRangeAndHeading(){
+    public double[] limelightRangeAndHeading(){
         result = limelight.getLatestResult();
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
         double distanceToGoal=0;
+        double headingToGoal=0;
         for (LLResultTypes.FiducialResult fr : fiducialResults) {
 
             if (fr.getFiducialId() == 20 || fr.getFiducialId() == 24) {
                 double angleToGoal=(-fr.getTargetYDegrees()+limelightAngle)*(3.14/180);
                 distanceToGoal=(targetHeight-limelightHeight)/Math.tan(angleToGoal);
+                headingToGoal = (fr.getTargetXDegrees());
             }
         }
-        return distanceToGoal;
+        if (distanceToGoal>24 && distanceToGoal<36){
+            if(Math.abs(headingToGoal)<20){
+                if (shooter1.getVelocity()*60/28 > 2100 && shooter1.getVelocity()*60/28 < 2300){
+                    light.setPosition(0.28);
+                } else {
+                    light.setPosition(0.388);
+                }
+            } else {
+                light.setPosition(0.5);
+            }
+        } else {
+            light.setPosition(0.5);
+        }
+        return new double[]{distanceToGoal, headingToGoal};
     }
 
     public void feedServoOn(){

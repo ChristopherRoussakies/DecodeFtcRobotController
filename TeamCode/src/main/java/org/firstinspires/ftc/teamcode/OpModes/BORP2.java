@@ -51,6 +51,7 @@ public class BORP2 extends OpMode {
     boolean lastLSState;
     boolean flipperUp;
 
+    double[] goalTargetingData;
 
 
     @Override
@@ -414,6 +415,8 @@ public class BORP2 extends OpMode {
         drive.updatePoseEstimate();
         Pose2d pose = drive.localizer.getPose();
 
+        goalTargetingData=shoot.limelightRangeAndHeading();
+
         telemetry.addData("Shooter Speed",shoot.getShooterSpeed());
         telemetry.addData("x", pose.position.x);
         telemetry.addData("y", pose.position.y);
@@ -429,7 +432,8 @@ public class BORP2 extends OpMode {
         telemetry.addData("Shooter Slot", shootSlot);
         telemetry.addData("Current State", state);
         telemetry.addData("Hamburger Flipper Position", index.getFlappyPose());
-        telemetry.addData("Range To Goal",shoot.limelightRangeAndHeading());
+        telemetry.addData("Range To Goal",goalTargetingData[0]);
+        telemetry.addData("Heading To Goal",goalTargetingData[1]);
         telemetry.addData("Shooter Debug Speed",shooterSpeed);
         telemetry.update();
     }
